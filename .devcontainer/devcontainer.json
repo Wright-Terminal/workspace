@@ -1,0 +1,5 @@
+{
+  "name": "Wright-Terminal workspace",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "postCreateCommand": "bash .devcontainer/clone-repos.sh"
+}
