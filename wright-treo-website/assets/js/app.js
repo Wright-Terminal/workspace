@@ -82,13 +82,35 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
 
-      // NOTE: front-end only in this draft — nothing is transmitted or stored yet.
-      // Wire this up to a real endpoint (email, CRM, backend) before this goes live.
-      setTimeout(function () {
-        form.classList.add('hide');
-        successName.textContent = ' ' + name.split(' ')[0];
-        success.classList.add('show');
-      }, 500);
+      fetch('/api/demo-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: name,
+          email: email,
+          company: company,
+          role: role,
+          notes: form.notes.value.trim()
+        })
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) {
+            throw new Error((result.data && result.data.error) || 'Something went wrong. Please try again.');
+          }
+          form.classList.add('hide');
+          successName.textContent = ' ' + name.split(' ')[0];
+          success.classList.add('show');
+        })
+        .catch(function (err) {
+          errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Request a Demo';
+        });
     });
   }
 })();
